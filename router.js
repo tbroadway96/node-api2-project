@@ -5,9 +5,12 @@ const router = express.Router();
 
 //POST
 router.post("/api/posts", (req, res) => {
-    req.body.title && req.body.contents;
+    console.log('body', req.body)
+    const title = req.body.title; 
+    const contents = req.body.contents;
 
-    !title || !contents ? res.status(400).json({ message: "Please provide title and contents for the post." })
+    !title || !contents 
+        ? res.status(400).json({ message: "Please provide title and contents for the post." })
         : posts.insert(req.body)
 
     .then(posts => {
@@ -21,13 +24,14 @@ router.post("/api/posts", (req, res) => {
 
 //POST
 router.post("/api/posts/:id/comments", (req, res) => {
-    posts.findById(req.params.id)
+    const post = posts.findById(req.params.id);
+    const comment = post.text;
 
-    !post ? res.status(404).json({ error: "The post with the specified ID does not exist." })
-        : req.comments.text && req.comments.id;
-
-    !text ? res.status(400).json({ errorMessage: "Please provide text for the comment." })
-        : posts.findById(req.params.id);
+    if (!post) {
+        res.status(404).json({ error: 'The post with the specified ID does not exist'});
+    } else  if (!post.text) {
+        res.status(400).json({ error: 'Please provide text for the comment' })
+    }
 
     posts.newComment(comment)
         .then(comment => {
@@ -51,9 +55,10 @@ router.get("/api/posts", (req, res) => {
 
 //GET
 router.get("/api/posts/:id", (req, res) => {
-    data.findById(req.params.id)
+    posts.findById(req.params.id)
     .then((post) => {
-        !post ? res.status(404).json({ message:"The post with the specified ID does not exist." }) 
+        !post 
+            ? res.status(404).json({ message:"The post with the specified ID does not exist." }) 
             : res.status(200).json(post);
     })
     .catch((error) => {
@@ -64,9 +69,10 @@ router.get("/api/posts/:id", (req, res) => {
 
 //GET
 router.get("/api/posts/:id/comments", (req, res) => {
-    posts.findPostComments(id)
+    posts.findPostComments(req.params.id)
     .then(data => {
-        data ? res.status(200).json(data)
+        data 
+            ? res.status(200).json(data)
             : res.status(404).json({ message: "The post with the specified ID does not exist." })
     })
     .catch(error => {
@@ -89,24 +95,15 @@ router.delete("/api/posts/:id", (req, res) => {
 
 //PUT
 router.put("/api/posts/:id", (req, res) => {
-    posts.findById(req.params.id)
-    .then((post) => {
-        !post ? res.status(404).json({ message:"The post with the specified ID does not exist." }) 
-            : res.status(200).json(post);
-    })
-    .catch((error) => {
-        console.log(error);
-        res.status(500).json({ error: "The post information could not be retrieved" })
-    })
+    const post = posts.findById(req.params.id);
+    const title = post.title;
+    const contents = post.contents;
 
-    !title || !contents ? res.status(400).json({ message: "Please provide title and contents for the post." })
-        : posts.update(req.params.id, req.body) 
-            .then(updated => {
-                updated ? res.status(200).json : res.status(200).json
-            })
-            .catch(error => {
-                res.status(500).json({ error: "The post information could not be modified." });
-            })
+    if (!title || !contents) {
+        res.status(400).json({ error: 'Please provide title or contents' })
+    } else {
+        res.status(200).json(post)
+    }
 })
 
 module.exports = router;
