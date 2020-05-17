@@ -4,7 +4,7 @@ const posts = require('./data/db');
 const router = express.Router();
 
 //POST
-router.post("/api/posts", (req, res) => {
+router.post("/", (req, res) => {
     console.log('body', req.body)
     const title = req.body.title; 
     const contents = req.body.contents;
@@ -23,7 +23,7 @@ router.post("/api/posts", (req, res) => {
 })
 
 //POST
-router.post("/api/posts/:id/comments", (req, res) => {
+router.post("/:id/comments", (req, res) => {
     const post = posts.findById(req.params.id);
     const comment = post.text;
 
@@ -43,7 +43,7 @@ router.post("/api/posts/:id/comments", (req, res) => {
 })
 
 //GET
-router.get("/api/posts", (req, res) => {
+router.get("/", (req, res) => {
     posts.find()
         .then(posts => {
             res.status(200).json(posts);
@@ -54,7 +54,7 @@ router.get("/api/posts", (req, res) => {
 })
 
 //GET
-router.get("/api/posts/:id", (req, res) => {
+router.get("/:id", (req, res) => {
     posts.findById(req.params.id)
     .then((post) => {
         !post 
@@ -68,7 +68,7 @@ router.get("/api/posts/:id", (req, res) => {
 })
 
 //GET
-router.get("/api/posts/:id/comments", (req, res) => {
+router.get("/:id/comments", (req, res) => {
     posts.findPostComments(req.params.id)
     .then(data => {
         data 
@@ -81,7 +81,7 @@ router.get("/api/posts/:id/comments", (req, res) => {
 })
 
 //DELETE
-router.delete("/api/posts/:id", (req, res) => {
+router.delete("/:id", (req, res) => {
     posts.remove(id)
     .then(removed => {
         removed 
@@ -94,7 +94,7 @@ router.delete("/api/posts/:id", (req, res) => {
 })
 
 //PUT
-router.put("/api/posts/:id", (req, res) => {
+router.put("/:id", (req, res) => {
     const post = posts.findById(req.params.id);
     const title = post.title;
     const contents = post.contents;
